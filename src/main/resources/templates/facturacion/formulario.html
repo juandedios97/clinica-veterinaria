@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Formulario de factura."/>
+    <title th:text="${titulo} + ' - Clinica Veterinaria'">Facturacion</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4"><div class="page-header-content pt-4">
+                    <h1 class="page-header-title"><div class="page-header-icon"><i data-feather="credit-card"></i></div><span th:text="${titulo}">Facturacion</span></h1>
+                </div></div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div class="row justify-content-center"><div class="col-xl-10">
+                    <div class="card mb-4">
+                        <div class="card-header"><i data-feather="credit-card" class="me-1"></i> Datos de la factura</div>
+                        <div class="card-body">
+                            <form th:action="@{/facturacion/guardar}" th:object="${factura}" method="post" novalidate>
+                                <input type="hidden" th:field="*{id}"/>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Numero *</label>
+                                        <input type="text" th:field="*{numero}" class="form-control" readonly="readonly"
+                                               th:classappend="${#fields.hasErrors('numero')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{numero}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Fecha emision *</label>
+                                        <input type="date" th:field="*{fechaEmision}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('fechaEmision')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{fechaEmision}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Fecha vencimiento</label>
+                                        <input type="date" th:field="*{fechaVencimiento}" class="form-control"/>
+                                    </div>
+                                </div>
+
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Mascota *</label>
+                                        <select th:field="*{mascota.id}" class="form-select" th:classappend="${#fields.hasErrors('mascota')} ? 'is-invalid'">
+                                            <option value="">-- Selecciona mascota --</option>
+                                            <option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre + ' (' + m.propietario.nombreCompleto + ')'}"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:errors="*{mascota}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Cita relacionada (opcional)</label>
+                                        <select th:field="*{cita.id}" class="form-select">
+                                            <option value="">-- Sin cita --</option>
+                                            <option th:each="c : ${citas}" th:value="${c.id}" th:text="${#temporals.format(c.fechaHora,'dd/MM/yyyy HH:mm') + ' - ' + c.mascota.nombre + ' - ' + c.motivo}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="small mb-1">Concepto *</label>
+                                    <input type="text" th:field="*{concepto}" class="form-control" placeholder="Consulta general, vacunas, tratamiento..."
+                                           th:classappend="${#fields.hasErrors('concepto')} ? 'is-invalid'"/>
+                                    <div class="invalid-feedback" th:errors="*{concepto}"></div>
+                                </div>
+
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-3">
+                                        <label class="small mb-1">Subtotal *</label>
+                                        <input type="number" step="0.01" min="0" th:field="*{subtotal}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('subtotal')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{subtotal}"></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small mb-1">Modo IVA *</label>
+                                        <select th:field="*{conIva}" class="form-select" id="conIvaSelect">
+                                            <option th:value="true">Con IVA 21%</option>
+                                            <option th:value="false">Sin IVA</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small mb-1">Impuesto</label>
+                                        <input type="number" step="0.01" min="0" th:field="*{impuesto}" class="form-control" readonly="readonly"
+                                               th:classappend="${#fields.hasErrors('impuesto')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{impuesto}"></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small mb-1">Total</label>
+                                        <input type="number" step="0.01" min="0" th:field="*{total}" class="form-control" readonly="readonly"
+                                               th:classappend="${#fields.hasErrors('total')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{total}"></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small mb-1">Estado *</label>
+                                        <select th:field="*{estado}" class="form-select">
+                                            <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" th:field="*{porcentajeIva}" id="porcentajeIva"/>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary"><i data-feather="save" class="me-1"></i> Guardar</button>
+                                    <a th:href="@{/facturacion}" class="btn btn-light">Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light"><div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clinica Veterinaria &copy; 2025</div></div></div></footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const subtotalInput = document.querySelector('input[name="subtotal"]');
+    const conIvaSelect = document.querySelector('select[name="conIva"]');
+    const porcentajeIvaInput = document.querySelector('input[name="porcentajeIva"]');
+    const impuestoInput = document.querySelector('input[name="impuesto"]');
+    const totalInput = document.querySelector('input[name="total"]');
+
+    function recalculateTotal() {
+        const subtotal = parseFloat(subtotalInput.value || '0');
+        const conIva = conIvaSelect.value === 'true';
+        const porcentajeIva = 21;
+        const impuesto = conIva ? (subtotal * porcentajeIva / 100) : 0;
+        porcentajeIvaInput.value = porcentajeIva.toFixed(2);
+        impuestoInput.value = impuesto.toFixed(2);
+        totalInput.value = (subtotal + impuesto).toFixed(2);
+    }
+
+    if (subtotalInput && conIvaSelect && impuestoInput && totalInput && porcentajeIvaInput) {
+        subtotalInput.addEventListener('input', recalculateTotal);
+        conIvaSelect.addEventListener('change', recalculateTotal);
+        recalculateTotal();
+    }
+});
+</script>
+</body>
+</html>

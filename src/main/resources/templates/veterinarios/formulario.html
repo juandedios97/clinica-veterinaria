@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Formulario de veterinario."/>
+    <title th:text="${titulo} + ' – Clínica Veterinaria'">Veterinario</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4"><div class="page-header-content pt-4">
+                    <h1 class="page-header-title"><div class="page-header-icon"><i data-feather="user-check"></i></div><span th:text="${titulo}">Veterinario</span></h1>
+                </div></div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div class="row justify-content-center"><div class="col-xl-8">
+                    <div class="card mb-4">
+                        <div class="card-header"><i data-feather="user-check" class="me-1"></i> Datos del veterinario</div>
+                        <div class="card-body">
+                            <form th:action="@{/veterinarios/guardar}" th:object="${veterinario}" method="post" enctype="multipart/form-data" novalidate>
+                                <input type="hidden" th:field="*{id}"/>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Nombre *</label>
+                                        <input type="text" th:field="*{nombre}" class="form-control" th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{nombre}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Apellidos *</label>
+                                        <input type="text" th:field="*{apellidos}" class="form-control" th:classappend="${#fields.hasErrors('apellidos')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{apellidos}"></div>
+                                    </div>
+                                </div>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Especialidad</label>
+                                        <input type="text" th:field="*{especialidad}" class="form-control"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Teléfono</label>
+                                        <input type="tel" th:field="*{telefono}" class="form-control" placeholder="912345678" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{telefono}"></div>
+                                    </div>
+                                </div>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Email profesional</label>
+                                        <input type="email" th:field="*{email}" class="form-control" placeholder="vet@clinica.com" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{email}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">N.º colegiado</label>
+                                        <input type="text" th:field="*{numeroColegiado}" class="form-control" placeholder="COL-12345"/>
+                                    </div>
+                                </div>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Años de experiencia</label>
+                                        <input type="number" min="0" th:field="*{aniosExperiencia}" class="form-control" th:classappend="${#fields.hasErrors('aniosExperiencia')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{aniosExperiencia}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Fecha de incorporación</label>
+                                        <input type="date" th:field="*{fechaIncorporacion}" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="small mb-1">Biografía</label>
+                                    <textarea th:field="*{biografia}" class="form-control" rows="3" placeholder="Resumen profesional, áreas de interés, certificaciones..."></textarea>
+                                </div>
+                                <div class="row gx-3 mb-3 align-items-end">
+                                    <div class="col-md-8">
+                                        <label class="small mb-1">Foto de perfil</label>
+                                        <input type="file" name="fotoArchivo" class="form-control" accept="image/*"/>
+                                        <div class="small text-muted mt-1">JPG/PNG/WebP. Máximo 5MB.</div>
+                                    </div>
+                                    <div class="col-md-4" th:if="${veterinario.id != null and veterinario.foto != null}">
+                                        <img th:src="@{/veterinarios/foto/{id}(id=${veterinario.id})}" alt="Foto veterinario"
+                                             class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;"/>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary"><i data-feather="save" class="me-1"></i> Guardar</button>
+                                    <a th:href="@{/veterinarios}" class="btn btn-light">Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light"><div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clínica Veterinaria &copy; 2025</div></div></div></footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

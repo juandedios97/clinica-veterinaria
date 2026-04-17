@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Panel de control de la clínica veterinaria."/>
+    <title>Dashboard – Clínica Veterinaria</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav th:replace="~{layout/fragments :: sidenav}"></nav>
+    </div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4">
+                    <div class="page-header-content pt-4">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto mt-4">
+                                <h1 class="page-header-title">
+                                    <div class="page-header-icon"><i data-feather="activity"></i></div>
+                                    Dashboard
+                                </h1>
+                                <div class="page-header-subtitle">Panel de control de la clínica veterinaria</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container-xl px-4 mt-n10">
+                <div th:replace="~{layout/fragments :: alertas}"></div>
+
+                <!-- Stats cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6 col-xl-3">
+                        <div class="card bg-primary text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="text-white-75 small fw-bold text-uppercase mb-1">Mascotas</div>
+                                        <div class="fs-3 fw-bold" th:text="${totalMascotas}">0</div>
+                                    </div>
+                                    <div class="fa-3x"><i data-feather="github" style="width:48px;height:48px;opacity:.5"></i></div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between small">
+                                <a class="text-white stretched-link" th:href="@{/mascotas}">Ver todas las mascotas</a>
+                                <div class="text-white"><i data-feather="chevron-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xl-3">
+                        <div class="card bg-success text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="text-white-75 small fw-bold text-uppercase mb-1">Propietarios</div>
+                                        <div class="fs-3 fw-bold" th:text="${totalPropietarios}">0</div>
+                                    </div>
+                                    <div><i data-feather="users" style="width:48px;height:48px;opacity:.5"></i></div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between small">
+                                <a class="text-white stretched-link" th:href="@{/propietarios}">Ver todos los propietarios</a>
+                                <div class="text-white"><i data-feather="chevron-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xl-3">
+                        <div class="card bg-warning text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="text-white-75 small fw-bold text-uppercase mb-1">Citas</div>
+                                        <div class="fs-3 fw-bold" th:text="${totalCitas}">0</div>
+                                    </div>
+                                    <div><i data-feather="calendar" style="width:48px;height:48px;opacity:.5"></i></div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between small">
+                                <a class="text-white stretched-link" th:href="@{/citas}">Ver todas las citas</a>
+                                <div class="text-white"><i data-feather="chevron-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xl-3">
+                        <div class="card bg-info text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="text-white-75 small fw-bold text-uppercase mb-1">Veterinarios</div>
+                                        <div class="fs-3 fw-bold" th:text="${totalVeterinarios}">0</div>
+                                    </div>
+                                    <div><i data-feather="user-check" style="width:48px;height:48px;opacity:.5"></i></div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between small">
+                                <a class="text-white stretched-link" th:href="@{/veterinarios}">Ver todos los veterinarios</a>
+                                <div class="text-white"><i data-feather="chevron-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-xl-4">
+                        <div class="card bg-danger text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Vacunas vencidas</div>
+                                    <div class="fs-3 fw-bold" th:text="${alertaVacunasVencidasCount}">0</div>
+                                </div>
+                                <i data-feather="alert-triangle" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card bg-warning text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Vacunas próximas</div>
+                                    <div class="fs-3 fw-bold" th:text="${alertaVacunasProximasCount}">0</div>
+                                </div>
+                                <i data-feather="clock" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card bg-success text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Vacunas al día</div>
+                                    <div class="fs-3 fw-bold" th:text="${alertaVacunasAlDiaCount}">0</div>
+                                </div>
+                                <i data-feather="check-circle" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graficos -->
+                <div class="row g-4 mb-4">
+                    <div class="col-xl-8">
+                        <div class="card h-100">
+                            <div class="card-header"><i data-feather="bar-chart-2" class="me-1"></i> Consultas por semana</div>
+                            <div class="card-body"><canvas id="consultasSemanaChart" height="120"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card h-100">
+                            <div class="card-header"><i data-feather="pie-chart" class="me-1"></i> Tipos de consulta</div>
+                            <div class="card-body"><canvas id="tiposConsultaChart" height="120"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header"><i data-feather="trending-up" class="me-1"></i> Nuevas mascotas por mes</div>
+                            <div class="card-body"><canvas id="mascotasMesChart" height="90"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimas citas -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div><i data-feather="calendar" class="me-1"></i> Últimas citas</div>
+                        <a th:href="@{/citas/nuevo}" class="btn btn-sm btn-primary">+ Nueva cita</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div th:if="${ultimasCitas.empty}" class="p-4 text-center text-muted">
+                            No hay citas registradas todavía.
+                        </div>
+                        <table th:unless="${ultimasCitas.empty}" class="table table-hover table-striped mb-0" id="datatablesSimple">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y hora</th>
+                                    <th>Mascota</th>
+                                    <th>Veterinario</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${ultimasCitas}">
+                                    <td th:text="${#temporals.format(c.fechaHora,'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${c.mascota.nombre}"></td>
+                                    <td th:text="${c.veterinario.nombreCompleto}"></td>
+                                    <td th:text="${c.motivo}"></td>
+                                    <td>
+                                        <span th:text="${c.estado}"
+                                              th:classappend="${c.estado.name() == 'COMPLETADA'} ? 'badge bg-success' :
+                                                              (${c.estado.name() == 'CANCELADA'} ? 'badge bg-danger' : 'badge bg-warning text-dark')"
+                                              class="badge"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Accesos rápidos -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card card-header-actions">
+                            <div class="card-header"><i data-feather="plus-circle" class="me-1"></i> Acciones rápidas</div>
+                            <div class="card-body d-grid gap-2">
+                                <a th:href="@{/mascotas/nuevo}" class="btn btn-outline-primary btn-sm">
+                                    <i data-feather="github" class="me-1"></i> Nueva mascota
+                                </a>
+                                <a th:href="@{/propietarios/nuevo}" class="btn btn-outline-success btn-sm">
+                                    <i data-feather="user-plus" class="me-1"></i> Nuevo propietario
+                                </a>
+                                <a th:href="@{/citas/nuevo}" class="btn btn-outline-warning btn-sm">
+                                    <i data-feather="calendar" class="me-1"></i> Nueva cita
+                                </a>
+                                <a th:href="@{/historial/nuevo}" class="btn btn-outline-info btn-sm">
+                                    <i data-feather="file-plus" class="me-1"></i> Nueva consulta
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light">
+            <div class="container-xl px-4">
+                <div class="row">
+                    <div class="col-md-6 small">Clínica Veterinaria &copy; 2025 &mdash; Proyecto DAW/DAM</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<div th:replace="~{layout/fragments :: scripts}"></div>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables/datatables-simple-demo.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    const consultasSemanaLabels = /*[[${consultasSemanaLabels}]]*/ [];
+    const consultasSemanaData = /*[[${consultasSemanaData}]]*/ [];
+    const mascotasMesLabels = /*[[${mascotasMesLabels}]]*/ [];
+    const mascotasMesData = /*[[${mascotasMesData}]]*/ [];
+    const tipoConsultaLabels = /*[[${tipoConsultaLabels}]]*/ [];
+    const tipoConsultaData = /*[[${tipoConsultaData}]]*/ [];
+
+    const chartTextColor = '#6c757d';
+    const gridColor = 'rgba(0,0,0,.08)';
+
+    const consultasCtx = document.getElementById('consultasSemanaChart');
+    if (consultasCtx) {
+        new Chart(consultasCtx, {
+            type: 'line',
+            data: {
+                labels: consultasSemanaLabels,
+                datasets: [{
+                    label: 'Consultas',
+                    data: consultasSemanaData,
+                    borderColor: '#1f77b4',
+                    backgroundColor: 'rgba(31,119,180,.18)',
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}},
+                scales: {
+                    x: {ticks: {color: chartTextColor}, grid: {color: gridColor}},
+                    y: {beginAtZero: true, ticks: {color: chartTextColor, precision: 0}, grid: {color: gridColor}}
+                }
+            }
+        });
+    }
+
+    const mascotasMesCtx = document.getElementById('mascotasMesChart');
+    if (mascotasMesCtx) {
+        new Chart(mascotasMesCtx, {
+            type: 'bar',
+            data: {
+                labels: mascotasMesLabels,
+                datasets: [{
+                    label: 'Nuevas mascotas',
+                    data: mascotasMesData,
+                    backgroundColor: 'rgba(46, 204, 113, .65)',
+                    borderColor: '#2ecc71',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}},
+                scales: {
+                    x: {ticks: {color: chartTextColor}, grid: {display: false}},
+                    y: {beginAtZero: true, ticks: {color: chartTextColor, precision: 0}, grid: {color: gridColor}}
+                }
+            }
+        });
+    }
+
+    const tiposCtx = document.getElementById('tiposConsultaChart');
+    if (tiposCtx) {
+        new Chart(tiposCtx, {
+            type: 'doughnut',
+            data: {
+                labels: tipoConsultaLabels,
+                datasets: [{
+                    data: tipoConsultaData,
+                    backgroundColor: ['#f39c12', '#3498db', '#1abc9c', '#e74c3c', '#9b59b6', '#95a5a6']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {color: chartTextColor, boxWidth: 12}
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

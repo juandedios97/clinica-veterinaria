@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<body>
+
+<nav th:fragment="topnav"
+     class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white"
+     id="sidenavAccordion">
+    <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle">
+        <i data-feather="menu"></i>
+    </button>
+    <a class="navbar-brand pe-3 ps-4 ps-lg-2" th:href="@{/}">
+        <i data-feather="heart" class="me-1"></i> Clínica Veterinaria
+    </a>
+    
+    <!-- Global Search Bar -->
+    <div class="d-flex align-items-center flex-grow-1 px-3 px-lg-4 mx-2">
+        <div class="input-group position-relative" style="max-width: 400px;">
+            <input type="text" class="form-control form-control-sm" id="globalSearchInput" 
+                   placeholder="🔍 Buscar mascota, dueño o cita..."
+                   style="border-radius: 20px; padding: 0.5rem 1rem;">
+            <div id="searchResults" class="position-absolute w-100 bg-white border border-light shadow-sm rounded mt-1" 
+                 style="top: 100%; left: 0; z-index: 1000; max-height: 500px; overflow-y: auto; display: none;">
+                <!-- Results will be populated here by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <ul class="navbar-nav align-items-center ms-auto">
+        <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" href="javascript:void(0);"
+               role="button" data-bs-toggle="dropdown">
+                <img class="img-fluid" src="/assets/img/illustrations/profiles/profile-1.png"/>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up">
+                <h6 class="dropdown-header d-flex align-items-center">
+                    <img class="dropdown-user-img" src="/assets/img/illustrations/profiles/profile-1.png"/>
+                    <div class="dropdown-user-details">
+                        <div class="dropdown-user-details-name" sec:authentication="name">Usuario</div>
+                        <div class="dropdown-user-details-email" sec:authentication="authorities">ROL</div>
+                    </div>
+                </h6>
+                <form th:action="@{/logout}" method="post" class="px-3 py-2">
+                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">Cerrar sesión</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<nav th:fragment="sidenav" class="sidenav shadow-right sidenav-light">
+    <div class="sidenav-menu">
+        <div class="nav accordion" id="accordionSidenav">
+            <div class="sidenav-menu-heading">Principal</div>
+            <a class="nav-link" th:href="@{/}"
+                    th:classappend="${currentPath == '/'} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="home"></i></div>
+                Dashboard
+            </a>
+            <div class="sidenav-menu-heading">Gestión</div>
+            <a class="nav-link" th:href="@{/mascotas}" sec:authorize="hasRole('ADMIN')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/mascotas')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="github"></i></div>
+                Mascotas
+            </a>
+            <a class="nav-link" th:href="@{/propietarios}" sec:authorize="hasRole('ADMIN')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/propietarios')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="users"></i></div>
+                Propietarios
+            </a>
+            <a class="nav-link" th:href="@{/veterinarios}" sec:authorize="hasRole('ADMIN')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/veterinarios')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="user-check"></i></div>
+                Veterinarios
+            </a>
+            <div class="sidenav-menu-heading">Clínica</div>
+            <a class="nav-link" th:href="@{/citas}" sec:authorize="hasAnyRole('ADMIN','RECEPCIONISTA')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/citas')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                Citas
+            </a>
+            <a class="nav-link" th:href="@{/facturacion}" sec:authorize="hasAnyRole('ADMIN','RECEPCIONISTA')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/facturacion')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="credit-card"></i></div>
+                Facturacion
+            </a>
+            <a class="nav-link" th:href="@{/historial}" sec:authorize="hasAnyRole('ADMIN','VETERINARIO')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/historial')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="file-text"></i></div>
+                Historial médico
+            </a>
+            <a class="nav-link" th:href="@{/vacunacion}" sec:authorize="hasRole('ADMIN')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/vacunacion')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="shield"></i></div>
+                Vacunación
+            </a>
+            <a class="nav-link" th:href="@{/usuarios}" sec:authorize="hasRole('ADMIN')"
+                    th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/usuarios')} ? 'active'">
+                <div class="nav-link-icon"><i data-feather="lock"></i></div>
+                Usuarios y roles
+            </a>
+        </div>
+    </div>
+    <div class="sidenav-footer">
+        <div class="sidenav-footer-content">
+            <div class="sidenav-footer-subtitle">Sesión activa:</div>
+            <div class="sidenav-footer-title">Administrador</div>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="alertas">
+    <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+        <button class="btn-close" type="button" data-bs-dismiss="alert"></button>
+        <span th:text="${exito}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        <button class="btn-close" type="button" data-bs-dismiss="alert"></button>
+        <span th:text="${error}"></span>
+    </div>
+</div>
+
+<div th:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+    <script th:src="@{/js/scripts.js}"></script>
+    <script th:src="@{/js/search.js}"></script>
+</div>
+
+</body>
+</html>

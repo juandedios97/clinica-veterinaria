@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Detalle de la consulta médica con tratamientos."/>
+    <title>Consulta – Clínica Veterinaria</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4"><div class="page-header-content pt-4">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto mt-4">
+                            <h1 class="page-header-title">
+                                <div class="page-header-icon"><i data-feather="file-text"></i></div>
+                                Consulta – <span th:text="${historial.mascota.nombre}"></span>
+                            </h1>
+                            <div class="page-header-subtitle" th:text="${#temporals.format(historial.fecha,'dd/MM/yyyy') + ' · ' + historial.veterinario.nombreCompleto}"></div>
+                        </div>
+                        <div class="col-12 col-xl-auto mt-4 d-flex gap-2">
+                            <a th:href="@{/historial/editar/{id}(id=${historial.id})}" class="btn btn-light"><i data-feather="edit" class="me-1"></i> Editar</a>
+                            <a th:href="@{/historial}" class="btn btn-light"><i data-feather="arrow-left" class="me-1"></i> Volver</a>
+                        </div>
+                    </div>
+                </div></div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div th:replace="~{layout/fragments :: alertas}"></div>
+                <div class="row g-4">
+                    <!-- Datos de la consulta -->
+                    <div class="col-xl-5">
+                        <div class="card mb-4">
+                            <div class="card-header"><i data-feather="clipboard" class="me-1"></i> Datos de la consulta</div>
+                            <div class="card-body">
+                                <div class="small text-muted fw-bold mb-1">Mascota</div>
+                                <div class="mb-3">
+                                    <a th:href="@{/mascotas/ver/{id}(id=${historial.mascota.id})}"
+                                       th:text="${historial.mascota.nombre + ' (' + historial.mascota.especie + ')'}"></a>
+                                </div>
+                                <div class="small text-muted fw-bold mb-1">Propietario</div>
+                                <div class="mb-3" th:text="${historial.mascota.propietario.nombreCompleto}"></div>
+                                <div class="small text-muted fw-bold mb-1">Veterinario</div>
+                                <div class="mb-3" th:text="${historial.veterinario.nombreCompleto}"></div>
+                                <div class="small text-muted fw-bold mb-1">Fecha</div>
+                                <div class="mb-3" th:text="${#temporals.format(historial.fecha,'dd/MM/yyyy')}"></div>
+                                <div class="small text-muted fw-bold mb-1">Descripción</div>
+                                <div class="mb-3" th:text="${historial.descripcion}"></div>
+                                <div class="small text-muted fw-bold mb-1">Diagnóstico</div>
+                                <div th:text="${historial.diagnostico ?: '—'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tratamientos -->
+                    <div class="col-xl-7">
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div><i data-feather="activity" class="me-1"></i> Tratamientos</div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div th:if="${tratamientos.empty}" class="p-3 text-muted text-center">Sin tratamientos registrados.</div>
+                                <table th:unless="${tratamientos.empty}" class="table table-sm mb-0">
+                                    <thead class="table-light">
+                                        <tr><th>Tratamiento</th><th>Tipo</th><th>Frecuencia</th><th>Duración</th><th>Estado</th><th></th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="t : ${tratamientos}">
+                                            <td>
+                                                <div class="fw-bold" th:text="${t.nombre}"></div>
+                                                <div class="small text-muted" th:text="${t.descripcion ?: ''}"></div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary-soft text-primary" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(t.tipo.name(),'_',' ')))}"></span>
+                                            </td>
+                                            <td th:text="${t.frecuencia ?: (t.dosis ?: '—')}"></td>
+                                            <td th:text="${t.duracion ?: '—'}"></td>
+                                            <td>
+                                                <form th:action="@{/historial/tratamiento/estado/{tid}/{hid}(tid=${t.id},hid=${historial.id})}" method="post" class="d-flex gap-2">
+                                                    <select name="estado" class="form-select form-select-sm">
+                                                        <option th:each="e : ${estadosTratamiento}" th:value="${e}" th:text="${e}" th:selected="${t.estado == e}"></option>
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">OK</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/historial/tratamiento/eliminar/{tid}/{hid}(tid=${t.id},hid=${historial.id})}"
+                                                   class="btn btn-datatable btn-icon btn-transparent-dark"
+                                                   onclick="return confirm('¿Eliminar tratamiento?')">
+                                                    <i data-feather="trash-2"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Documentos clínicos -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div><i data-feather="paperclip" class="me-1"></i> Documentos clínicos</div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div th:if="${documentos.empty}" class="p-3 text-muted text-center">Sin documentos registrados.</div>
+                                <table th:unless="${documentos.empty}" class="table table-sm mb-0">
+                                    <thead class="table-light">
+                                        <tr><th>Documento</th><th>Tipo</th><th>Fecha</th><th>Acciones</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="d : ${documentos}">
+                                            <td>
+                                                <div class="fw-bold" th:text="${d.titulo}"></div>
+                                                <div class="small text-muted" th:text="${d.nombreArchivo}"></div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary-soft text-primary" th:text="${d.tipoDocumento}"></span>
+                                            </td>
+                                            <td th:text="${#temporals.format(d.fechaSubida,'dd/MM/yyyy HH:mm')}"></td>
+                                            <td>
+                                                <a th:href="@{/historial/documento/{id}(id=${d.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1" target="_blank">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                                <a th:href="@{/historial/documento/descargar/{id}(id=${d.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1">
+                                                    <i data-feather="download"></i>
+                                                </a>
+                                                <a th:href="@{/historial/documento/eliminar/{did}/{hid}(did=${d.id},hid=${historial.id})}"
+                                                   class="btn btn-datatable btn-icon btn-transparent-dark"
+                                                   onclick="return confirm('¿Eliminar documento?')">
+                                                    <i data-feather="trash-2"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Subir documento clínico -->
+                        <div class="card mb-4">
+                            <div class="card-header"><i data-feather="upload" class="me-1"></i> Subir documento clínico</div>
+                            <div class="card-body">
+                                <form th:action="@{/historial/documento/guardar/{id}(id=${historial.id})}"
+                                      th:object="${nuevoDocumento}" method="post" enctype="multipart/form-data" novalidate>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="small mb-1">Título *</label>
+                                            <input type="text" th:field="*{titulo}" class="form-control" placeholder="Radiografía tórax / Informe analítica"/>
+                                            <div class="invalid-feedback d-block" th:errors="*{titulo}"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1">Tipo de documento *</label>
+                                            <select th:field="*{tipoDocumento}" class="form-select">
+                                                <option th:each="tipo : ${tiposDocumento}" th:value="${tipo}" th:text="${tipo}"></option>
+                                            </select>
+                                            <div class="invalid-feedback d-block" th:errors="*{tipoDocumento}"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-7">
+                                            <label class="small mb-1">Archivo PDF / imagen *</label>
+                                            <input type="file" name="archivo" class="form-control" accept="application/pdf,image/*"/>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="small mb-1">Observaciones</label>
+                                            <input type="text" th:field="*{observaciones}" class="form-control" placeholder="Hallazgos, notas, etc."/>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i data-feather="upload" class="me-1"></i> Subir
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Añadir tratamiento -->
+                        <div class="card mb-4">
+                            <div class="card-header"><i data-feather="plus-circle" class="me-1"></i> Añadir tratamiento</div>
+                            <div class="card-body">
+                                <form th:action="@{/historial/tratamiento/guardar/{id}(id=${historial.id})}"
+                                      th:object="${nuevoTratamiento}" method="post" novalidate>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="small mb-1">Nombre *</label>
+                                            <input type="text" th:field="*{nombre}" class="form-control"
+                                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"/>
+                                            <div class="invalid-feedback" th:errors="*{nombre}"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1">Tipo *</label>
+                                            <select th:field="*{tipo}" class="form-select"
+                                                    th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'">
+                                                <option th:each="tipo : ${tiposTratamiento}" th:value="${tipo}" th:text="${tipo}"></option>
+                                            </select>
+                                            <div class="invalid-feedback" th:errors="*{tipo}"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-8">
+                                            <label class="small mb-1">Descripción</label>
+                                            <input type="text" th:field="*{descripcion}" class="form-control"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="small mb-1">Estado *</label>
+                                            <select th:field="*{estado}" class="form-select">
+                                                <option th:each="estado : ${estadosTratamiento}" th:value="${estado}" th:text="${estado}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-4">
+                                            <label class="small mb-1">Frecuencia</label>
+                                            <input type="text" th:field="*{frecuencia}" class="form-control" placeholder="ej: cada 8h"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="small mb-1">Duración</label>
+                                            <input type="text" th:field="*{duracion}" class="form-control" placeholder="ej: 7 días"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="small mb-1">Dosis</label>
+                                            <input type="text" th:field="*{dosis}" class="form-control" placeholder="ej: 20mg"/>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i data-feather="plus" class="me-1"></i> Añadir
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light"><div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clínica Veterinaria &copy; 2025</div></div></div></footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

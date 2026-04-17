@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Formulario de cita."/>
+    <title th:text="${titulo} + ' – Clínica Veterinaria'">Cita</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4"><div class="page-header-content pt-4">
+                    <h1 class="page-header-title"><div class="page-header-icon"><i data-feather="calendar"></i></div><span th:text="${titulo}">Cita</span></h1>
+                </div></div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div class="row justify-content-center"><div class="col-xl-8">
+                    <div class="card mb-4">
+                        <div class="card-header"><i data-feather="calendar" class="me-1"></i> Datos de la cita</div>
+                        <div class="card-body">
+                            <form th:action="@{/citas/guardar}" th:object="${cita}" method="post" novalidate>
+                                <input type="hidden" th:field="*{id}"/>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Mascota *</label>
+                                        <select th:field="*{mascota.id}" class="form-select" th:classappend="${#fields.hasErrors('mascota')} ? 'is-invalid'">
+                                            <option value="">-- Selecciona mascota --</option>
+                                            <option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre + ' (' + m.propietario.nombreCompleto + ')'}"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:errors="*{mascota}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Veterinario *</label>
+                                        <select th:field="*{veterinario.id}" class="form-select" th:classappend="${#fields.hasErrors('veterinario')} ? 'is-invalid'">
+                                            <option value="">-- Selecciona veterinario --</option>
+                                            <option th:each="v : ${veterinarios}" th:value="${v.id}" th:text="${v.nombreCompleto}"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:errors="*{veterinario}"></div>
+                                    </div>
+                                </div>
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Fecha y hora *</label>
+                                        <input type="datetime-local" th:field="*{fechaHora}" class="form-control" th:classappend="${#fields.hasErrors('fechaHora')} ? 'is-invalid'"/>
+                                        <div class="invalid-feedback" th:errors="*{fechaHora}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Estado</label>
+                                        <select th:field="*{estado}" class="form-select">
+                                            <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="small mb-1">Motivo *</label>
+                                    <input type="text" th:field="*{motivo}" class="form-control" th:classappend="${#fields.hasErrors('motivo')} ? 'is-invalid'"/>
+                                    <div class="invalid-feedback" th:errors="*{motivo}"></div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary"><i data-feather="save" class="me-1"></i> Guardar</button>
+                                    <a th:href="@{/citas}" class="btn btn-light">Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light"><div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clínica Veterinaria &copy; 2025</div></div></div></footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

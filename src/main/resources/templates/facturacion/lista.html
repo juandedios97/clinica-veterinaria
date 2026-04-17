@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Facturacion de la clinica veterinaria."/>
+    <title>Facturacion - Clinica Veterinaria</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4"><div class="page-header-content pt-4">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto mt-4">
+                            <h1 class="page-header-title"><div class="page-header-icon"><i data-feather="credit-card"></i></div>Facturacion</h1>
+                            <div class="page-header-subtitle">Control de facturas y estado de cobro</div>
+                        </div>
+                        <div class="col-12 col-xl-auto mt-4">
+                            <a th:href="@{/facturacion/nuevo}" class="btn btn-light"><i data-feather="plus" class="me-1"></i> Nueva factura</a>
+                        </div>
+                    </div>
+                </div></div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div th:replace="~{layout/fragments :: alertas}"></div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form th:action="@{/facturacion}" method="get" class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                                <label class="small mb-1">Desde</label>
+                                <input type="date" name="desde" class="form-control" th:value="${desde}"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="small mb-1">Hasta</label>
+                                <input type="date" name="hasta" class="form-control" th:value="${hasta}"/>
+                            </div>
+                            <div class="col-md-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary w-100"><i data-feather="filter" class="me-1"></i> Filtrar</button>
+                                <a th:href="@{/facturacion}" class="btn btn-outline-secondary w-100">Limpiar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3">
+                        <div class="card bg-warning text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Pendientes</div>
+                                    <div class="fs-3 fw-bold" th:text="${pendientesCount}">0</div>
+                                </div>
+                                <i data-feather="clock" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card bg-success text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Pagadas</div>
+                                    <div class="fs-3 fw-bold" th:text="${pagadasCount}">0</div>
+                                </div>
+                                <i data-feather="check-circle" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card bg-danger text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Vencidas</div>
+                                    <div class="fs-3 fw-bold" th:text="${vencidasCount}">0</div>
+                                </div>
+                                <i data-feather="alert-triangle" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card bg-primary text-white h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-white-75 fw-bold text-uppercase mb-1">Total facturado</div>
+                                    <div class="fs-6 fw-bold" th:text="${#numbers.formatDecimal(totalFacturado,1,'POINT',2,'COMMA') + ' EUR'}">0.00 EUR</div>
+                                    <div class="small text-white-75" th:text="'Cobrado: ' + ${#numbers.formatDecimal(totalPagado,1,'POINT',2,'COMMA')} + ' EUR'">Cobrado: 0.00 EUR</div>
+                                </div>
+                                <i data-feather="bar-chart-2" style="width:42px;height:42px;opacity:.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header"><i data-feather="credit-card" class="me-1"></i> Registro de facturas</div>
+                    <div class="card-body p-0">
+                        <div th:if="${facturas.empty}" class="p-4 text-muted text-center">No hay facturas registradas.</div>
+                        <table th:unless="${facturas.empty}" class="table table-hover table-striped mb-0" id="datatablesSimple">
+                            <thead>
+                                <tr><th>Numero</th><th>Fecha</th><th>Mascota / Propietario</th><th>Concepto</th><th>Total</th><th>Estado</th><th>Acciones</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="f : ${facturas}">
+                                    <td class="fw-bold" th:text="${f.numero}"></td>
+                                    <td th:text="${#temporals.format(f.fechaEmision,'dd/MM/yyyy')}"></td>
+                                    <td>
+                                        <div class="fw-bold" th:text="${f.mascota.nombre}"></div>
+                                        <div class="small text-muted" th:text="${f.mascota.propietario.nombreCompleto}"></div>
+                                    </td>
+                                    <td th:text="${f.concepto}"></td>
+                                    <td th:text="${#numbers.formatDecimal(f.total,1,'POINT',2,'COMMA') + ' EUR'}"></td>
+                                    <td><span class="badge" th:classappend="${f.estadoBadgeClass}" th:text="${f.estado}"></span></td>
+                                    <td>
+                                        <a th:href="@{/facturacion/editar/{id}(id=${f.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1"><i data-feather="edit"></i></a>
+                                        <a th:href="@{/facturacion/{id}/pdf(id=${f.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1" title="Descargar PDF"><i data-feather="file-text"></i></a>
+                                        <form th:if="${f.estado.name() != 'PAGADA'}" th:action="@{/facturacion/{id}/pagar(id=${f.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-datatable btn-icon btn-transparent-dark me-1" title="Marcar pagada"><i data-feather="check"></i></button>
+                                        </form>
+                                        <a th:href="@{/facturacion/eliminar/{id}(id=${f.id})}" class="btn btn-datatable btn-icon btn-transparent-dark" onclick="return confirm('¿Eliminar esta factura?')"><i data-feather="trash-2"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light"><div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clinica Veterinaria &copy; 2025</div></div></div></footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables/datatables-simple-demo.js}"></script>
+</body>
+</html>

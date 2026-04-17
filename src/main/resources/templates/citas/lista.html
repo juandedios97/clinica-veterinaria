@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Listado de citas de la clínica veterinaria."/>
+    <title>Citas – Clínica Veterinaria</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4"><div class="page-header-content pt-4">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto mt-4">
+                            <h1 class="page-header-title"><div class="page-header-icon"><i data-feather="calendar"></i></div>Citas</h1>
+                            <div class="page-header-subtitle">Agenda de consultas y visitas</div>
+                        </div>
+                        <div class="col-12 col-xl-auto mt-4">
+                            <a th:href="@{/citas/nuevo}" class="btn btn-light"><i data-feather="plus" class="me-1"></i> Nueva cita</a>
+                        </div>
+                    </div>
+                </div></div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div th:replace="~{layout/fragments :: alertas}"></div>
+
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div><i data-feather="calendar" class="me-1"></i> Calendario de citas</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="filtroVeterinario" class="small text-muted mb-0">Veterinario</label>
+                            <select id="filtroVeterinario" class="form-select form-select-sm" style="min-width: 240px;">
+                                <option value="">Todos</option>
+                                <option th:each="v : ${veterinarios}" th:value="${v.id}" th:text="${v.nombreCompleto}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="small text-muted mb-2">Arrastra una cita para cambiarla de hora o día. Vista por semana/día.</div>
+                        <div id="calendarCitas"></div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header"><i data-feather="calendar" class="me-1"></i> Listado de citas</div>
+                    <div class="card-body p-0">
+                        <div th:if="${citas.empty}" class="p-4 text-muted text-center">No hay citas registradas.</div>
+                        <table th:unless="${citas.empty}" class="table table-hover table-striped mb-0" id="datatablesSimple">
+                            <thead><tr><th>Fecha y hora</th><th>Mascota</th><th>Propietario</th><th>Veterinario</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody>
+                                <tr th:each="c : ${citas}">
+                                    <td th:text="${#temporals.format(c.fechaHora,'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${c.mascota.nombre}"></td>
+                                    <td th:text="${c.mascota.propietario.nombreCompleto}"></td>
+                                    <td th:text="${c.veterinario.nombreCompleto}"></td>
+                                    <td th:text="${c.motivo}"></td>
+                                    <td>
+                                        <span th:text="${c.estado}"
+                                              th:classappend="${c.estado.name() == 'COMPLETADA'} ? 'bg-success' : (${c.estado.name() == 'CANCELADA'} ? 'bg-danger' : 'bg-warning text-dark')"
+                                              class="badge"></span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/facturacion/generar-desde-cita/{id}(id=${c.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1" title="Generar factura"><i data-feather="file-plus"></i></a>
+                                        <a th:href="@{/citas/editar/{id}(id=${c.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1"><i data-feather="edit"></i></a>
+                                        <a th:href="@{/citas/eliminar/{id}(id=${c.id})}" class="btn btn-datatable btn-icon btn-transparent-dark" onclick="return confirm('¿Eliminar esta cita?')"><i data-feather="trash-2"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light"><div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clínica Veterinaria &copy; 2025</div></div></div></footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables/datatables-simple-demo.js}"></script>
+<script>
+    function toLocalDateTimeString(date) {
+        const pad = n => String(n).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendarCitas');
+        const filtroVeterinarioEl = document.getElementById('filtroVeterinario');
+        if (!calendarEl) return;
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            locale: 'es',
+            slotMinTime: '08:00:00',
+            slotMaxTime: '21:00:00',
+            allDaySlot: false,
+            editable: true,
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                week: 'Semana',
+                day: 'Dia'
+            },
+            events: function (fetchInfo, successCallback, failureCallback) {
+                const vetId = filtroVeterinarioEl && filtroVeterinarioEl.value ? `?veterinarioId=${encodeURIComponent(filtroVeterinarioEl.value)}` : '';
+                fetch(`/citas/api/eventos${vetId}`)
+                    .then(r => r.json())
+                    .then(data => successCallback(data))
+                    .catch(err => {
+                        console.error(err);
+                        failureCallback(err);
+                    });
+            },
+            eventDrop: function (info) {
+                const body = new URLSearchParams();
+                body.append('nuevaFechaHora', toLocalDateTimeString(info.event.start));
+
+                fetch(`/citas/api/${info.event.id}/mover`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: body.toString()
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.ok) {
+                        info.revert();
+                        alert(data.message || 'No se pudo mover la cita.');
+                    }
+                })
+                .catch(() => {
+                    info.revert();
+                    alert('No se pudo mover la cita.');
+                });
+            },
+            eventClick: function (info) {
+                window.location.href = `/citas/editar/${info.event.id}`;
+            }
+        });
+
+        calendar.render();
+
+        if (filtroVeterinarioEl) {
+            filtroVeterinarioEl.addEventListener('change', function () {
+                calendar.refetchEvents();
+            });
+        }
+    });
+</script>
+</body>
+</html>

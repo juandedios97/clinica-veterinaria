@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Listado de mascotas de la clínica veterinaria."/>
+    <title>Mascotas – Clínica Veterinaria</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4">
+                    <div class="page-header-content pt-4">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto mt-4">
+                                <h1 class="page-header-title">
+                                    <div class="page-header-icon"><i data-feather="github"></i></div>
+                                    Mascotas
+                                </h1>
+                                <div class="page-header-subtitle">Gestión de mascotas registradas</div>
+                            </div>
+                            <div class="col-12 col-xl-auto mt-4">
+                                <a th:href="@{/mascotas/nuevo}" class="btn btn-light">
+                                    <i data-feather="plus" class="me-1"></i> Nueva mascota
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div th:replace="~{layout/fragments :: alertas}"></div>
+                <div class="card mb-4">
+                    <div class="card-header"><i data-feather="github" class="me-1"></i> Listado de mascotas</div>
+                    <div class="card-body p-0">
+                        <div th:if="${mascotas.empty}" class="p-4 text-center text-muted">No hay mascotas registradas.</div>
+                        <table th:unless="${mascotas.empty}" class="table table-hover table-striped mb-0" id="datatablesSimple">
+                            <thead>
+                                <tr><th>#</th><th>Foto</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Nacimiento</th><th>Propietario</th><th>Acciones</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="m : ${mascotas}">
+                                    <td th:text="${m.id}"></td>
+                                    <td>
+                                        <img th:if="${m.foto != null}" th:src="@{/mascotas/foto/{id}(id=${m.id})}"
+                                             alt="Foto mascota" class="rounded border"
+                                             style="width:40px;height:40px;object-fit:cover;"/>
+                                        <span th:unless="${m.foto != null}" class="text-muted">—</span>
+                                    </td>
+                                    <td th:text="${m.nombre}"></td>
+                                    <td><span class="badge bg-primary-soft text-primary" th:text="${m.especie}"></span></td>
+                                    <td th:text="${m.raza ?: '—'}"></td>
+                                    <td th:text="${m.fechaNacimiento != null ? #temporals.format(m.fechaNacimiento,'dd/MM/yyyy') : '—'}"></td>
+                                    <td>
+                                        <a th:href="@{/propietarios/ver/{id}(id=${m.propietario.id})}"
+                                           th:text="${m.propietario.nombreCompleto}" class="text-decoration-none"></a>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/mascotas/ver/{id}(id=${m.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1"><i data-feather="eye"></i></a>
+                                        <a th:href="@{/mascotas/editar/{id}(id=${m.id})}" class="btn btn-datatable btn-icon btn-transparent-dark me-1"><i data-feather="edit"></i></a>
+                                        <a th:href="@{/mascotas/eliminar/{id}(id=${m.id})}" class="btn btn-datatable btn-icon btn-transparent-dark" onclick="return confirm('¿Eliminar esta mascota?')"><i data-feather="trash-2"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light">
+            <div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clínica Veterinaria &copy; 2025</div></div></div>
+        </footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables/datatables-simple-demo.js}"></script>
+</body>
+</html>

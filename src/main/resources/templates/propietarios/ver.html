@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Ficha del propietario."/>
+    <title th:text="${propietario.nombreCompleto} + ' – Clínica Veterinaria'">Propietario</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="nav-fixed">
+<nav th:replace="~{layout/fragments :: topnav}"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav"><nav th:replace="~{layout/fragments :: sidenav}"></nav></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                <div class="container-xl px-4">
+                    <div class="page-header-content pt-4">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto mt-4">
+                                <h1 class="page-header-title">
+                                    <div class="page-header-icon"><i data-feather="user"></i></div>
+                                    <span th:text="${propietario.nombreCompleto}"></span>
+                                </h1>
+                            </div>
+                            <div class="col-12 col-xl-auto mt-4 d-flex gap-2">
+                                <a th:href="@{/propietarios/editar/{id}(id=${propietario.id})}" class="btn btn-light">
+                                    <i data-feather="edit" class="me-1"></i> Editar
+                                </a>
+                                <a th:href="@{/propietarios}" class="btn btn-light">
+                                    <i data-feather="arrow-left" class="me-1"></i> Volver
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="container-xl px-4 mt-n10">
+                <div th:replace="~{layout/fragments :: alertas}"></div>
+                <div class="row g-4">
+                    <div class="col-xl-4">
+                        <div class="card mb-4">
+                            <div class="card-header"><i data-feather="info" class="me-1"></i> Datos personales</div>
+                            <div class="card-body">
+                                <div class="small fw-bold text-muted mb-1">Teléfono</div>
+                                <div class="mb-3" th:text="${propietario.telefono}"></div>
+                                <div class="small fw-bold text-muted mb-1">Email</div>
+                                <div class="mb-3" th:text="${propietario.email}"></div>
+                                <div class="small fw-bold text-muted mb-1">Dirección</div>
+                                <div th:text="${propietario.direccion ?: '—'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8">
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div><i data-feather="github" class="me-1"></i> Mascotas</div>
+                                <a th:href="@{/mascotas/nuevo}" class="btn btn-sm btn-primary">+ Nueva mascota</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div th:if="${propietario.mascotas.empty}" class="p-4 text-muted text-center">Sin mascotas registradas.</div>
+                                <table th:unless="${propietario.mascotas.empty}" class="table table-hover mb-0">
+                                    <thead><tr><th>Nombre</th><th>Especie</th><th>Raza</th><th></th></tr></thead>
+                                    <tbody>
+                                        <tr th:each="m : ${propietario.mascotas}">
+                                            <td th:text="${m.nombre}"></td>
+                                            <td th:text="${m.especie}"></td>
+                                            <td th:text="${m.raza ?: '—'}"></td>
+                                            <td>
+                                                <a th:href="@{/mascotas/ver/{id}(id=${m.id})}" class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer-admin mt-auto footer-light">
+            <div class="container-xl px-4"><div class="row"><div class="col-md-6 small">Clínica Veterinaria &copy; 2025</div></div></div>
+        </footer>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

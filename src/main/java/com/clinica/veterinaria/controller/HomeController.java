@@ -1,6 +1,7 @@
 package com.clinica.veterinaria.controller;
 
 import com.clinica.veterinaria.service.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +41,14 @@ public class HomeController {
         this.vacunacionService = vacunacionService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/post-login")
+    public String postLogin(Authentication authentication) {
+        boolean esCliente = authentication.getAuthorities().stream()
+            .anyMatch(a -> "ROLE_CLIENTE".equals(a.getAuthority()));
+        return esCliente ? "redirect:/cliente" : "redirect:/dashboard";
+    }
+
+    @GetMapping("/dashboard")
     public String index(Model model) {
         var mascotas = mascotaService.findAll();
         var citas = citaService.findAll();

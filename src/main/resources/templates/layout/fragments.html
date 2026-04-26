@@ -51,8 +51,8 @@
     <div class="sidenav-menu">
         <div class="nav accordion" id="accordionSidenav">
             <div class="sidenav-menu-heading">Principal</div>
-            <a class="nav-link" th:href="@{/}"
-                    th:classappend="${currentPath == '/'} ? 'active'">
+            <a class="nav-link" th:href="@{/dashboard}"
+                    th:classappend="${currentPath == '/dashboard'} ? 'active'">
                 <div class="nav-link-icon"><i data-feather="home"></i></div>
                 Dashboard
             </a>

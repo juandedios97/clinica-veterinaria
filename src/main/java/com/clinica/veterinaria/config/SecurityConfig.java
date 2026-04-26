@@ -21,18 +21,20 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/assets/**", "/images/**", "/error").permitAll()
-                .requestMatchers("/api/search/**").permitAll()
+                .requestMatchers("/api/search/**", "/public/**").permitAll()
                 .requestMatchers("/login").permitAll()
+                .requestMatchers("/cliente/**").hasRole("CLIENTE")
                 .requestMatchers("/usuarios/**").hasRole("ADMIN")
                 .requestMatchers("/historial/**").hasAnyRole("ADMIN", "VETERINARIO")
                 .requestMatchers("/citas/**").hasAnyRole("ADMIN", "RECEPCIONISTA")
                 .requestMatchers("/facturacion/**").hasAnyRole("ADMIN", "RECEPCIONISTA")
                 .requestMatchers("/mascotas/**", "/propietarios/**", "/veterinarios/**", "/vacunacion/**").hasRole("ADMIN")
-                .requestMatchers("/").authenticated()
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/dashboard").hasAnyRole("ADMIN", "VETERINARIO", "RECEPCIONISTA")
                 .anyRequest().authenticated())
             .formLogin(login -> login
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/post-login", true)
                 .permitAll())
             .logout(logout -> logout
                 .logoutUrl("/logout")

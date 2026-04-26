@@ -36,6 +36,10 @@ public class Usuario {
     @Column(name = "activo", nullable = false)
     private boolean activo = true;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "propietario_id")
+    private Propietario propietario;
+
     public Usuario() {}
 
     public Long getId() { return id; }
@@ -55,4 +59,7 @@ public class Usuario {
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
+
+    public Propietario getPropietario() { return propietario; }
+    public void setPropietario(Propietario propietario) { this.propietario = propietario; }
 }

@@ -29,4 +29,8 @@ public class HistorialMedicoService {
     public List<HistorialMedico> findByMascota(Long mascotaId) {
         return repo.findByMascotaIdOrderByFechaDesc(mascotaId);
     }
+
+    public List<HistorialMedico> findByPropietario(Long propietarioId) {
+        return repo.findByMascotaPropietarioIdOrderByFechaDesc(propietarioId);
+    }
 }

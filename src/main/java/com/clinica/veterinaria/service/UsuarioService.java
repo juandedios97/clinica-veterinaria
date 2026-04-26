@@ -35,6 +35,11 @@ public class UsuarioService implements UserDetailsService {
             .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado: " + id));
     }
 
+    public Usuario findByUsername(String username) {
+        return repo.findByUsername(username)
+            .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado: " + username));
+    }
+
     public Usuario save(Usuario usuario) {
         Usuario existente = usuario.getId() != null ? findById(usuario.getId()) : null;
 
@@ -46,6 +51,10 @@ public class UsuarioService implements UserDetailsService {
             } else {
                 usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             }
+        }
+
+        if (usuario.getRol() != RolUsuario.CLIENTE) {
+            usuario.setPropietario(null);
         }
 
         return repo.save(usuario);

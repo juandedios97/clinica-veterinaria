@@ -42,6 +42,10 @@ public class VacunacionService {
         return repo.findByMascotaId(mascotaId);
     }
 
+    public List<Vacunacion> findByPropietario(Long propietarioId) {
+        return repo.findByMascotaPropietarioIdOrderByFechaAplicadaDesc(propietarioId);
+    }
+
     public List<Vacunacion> findVencidas() {
         return repo.findByProximaDosisBefore(LocalDate.now());
     }

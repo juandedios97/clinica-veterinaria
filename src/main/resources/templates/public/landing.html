@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Mascota Sana - Cl&iacute;nica Veterinaria</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --landing-primary: #0f766e;
+            --landing-primary-dark: #115e59;
+            --landing-accent: #f59e0b;
+            --landing-ink: #14213d;
+            --landing-muted: #64748b;
+            --landing-soft: #f4fbf9;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            color: var(--landing-ink);
+            background-color: #ffffff;
+        }
+
+        .landing-navbar {
+            backdrop-filter: blur(14px);
+        }
+
+        .brand-mark {
+            width: 2.35rem;
+            height: 2.35rem;
+            border-radius: 50%;
+            background: var(--landing-primary);
+            color: #fff;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 86vh;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+            background:
+                linear-gradient(90deg, rgba(9, 33, 42, .86) 0%, rgba(9, 33, 42, .58) 46%, rgba(9, 33, 42, .18) 100%),
+                url('https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&w=1800&q=82') center center / cover no-repeat;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 8rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 44rem;
+            padding: 7rem 0 9rem;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .45rem .8rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .16);
+            border: 1px solid rgba(255, 255, 255, .24);
+            font-weight: 700;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 7vw, 5.4rem);
+            line-height: .98;
+            letter-spacing: 0;
+        }
+
+        .hero-lead {
+            max-width: 38rem;
+            font-size: 1.18rem;
+            color: rgba(255, 255, 255, .88);
+        }
+
+        .text-white-75 {
+            color: rgba(255, 255, 255, .75);
+        }
+
+        .btn-landing {
+            border-radius: 999px;
+            padding: .9rem 1.35rem;
+            font-weight: 800;
+        }
+
+        .btn-landing-primary {
+            color: #0f172a;
+            background: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .btn-landing-primary:hover {
+            color: #0f172a;
+            background: #f8fafc;
+            border-color: #f8fafc;
+        }
+
+        .hero-stat {
+            min-width: 8.75rem;
+            border-left: 3px solid var(--landing-accent);
+            padding-left: 1rem;
+        }
+
+        .section-kicker {
+            color: var(--landing-primary);
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            font-size: .78rem;
+        }
+
+        .trust-band {
+            margin-top: -4.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .trust-panel {
+            background: #fff;
+            border: 1px solid rgba(15, 118, 110, .12);
+            border-radius: .5rem;
+            box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, .12);
+        }
+
+        .trust-item {
+            min-height: 6.5rem;
+        }
+
+        .icon-box {
+            width: 3rem;
+            height: 3rem;
+            border-radius: .5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 118, 110, .1);
+            color: var(--landing-primary);
+            flex: 0 0 auto;
+        }
+
+        .about-section {
+            background: var(--landing-soft);
+        }
+
+        .about-img {
+            width: 100%;
+            min-height: 26rem;
+            object-fit: cover;
+            border-radius: .5rem;
+            box-shadow: 0 1rem 2rem rgba(15, 23, 42, .16);
+        }
+
+        .feature-card {
+            height: 100%;
+            border: 1px solid rgba(15, 118, 110, .11);
+            border-radius: .5rem;
+            box-shadow: 0 .75rem 1.75rem rgba(15, 23, 42, .07);
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-.35rem);
+            border-color: rgba(15, 118, 110, .28);
+            box-shadow: 0 1rem 2.25rem rgba(15, 23, 42, .12);
+        }
+
+        .cta-section {
+            background:
+                linear-gradient(90deg, rgba(15, 118, 110, .96), rgba(20, 83, 45, .86)),
+                url('https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1600&q=80') center center / cover no-repeat;
+            color: #fff;
+        }
+
+        .landing-footer {
+            background: #0b1720;
+            color: rgba(255, 255, 255, .78);
+        }
+
+        .landing-footer a {
+            color: rgba(255, 255, 255, .78);
+            text-decoration: none;
+        }
+
+        .landing-footer a:hover {
+            color: #fff;
+        }
+
+        .footer-brand-mark {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: .5rem;
+            background: var(--landing-primary);
+            color: #fff;
+        }
+
+        .footer-heading {
+            color: #fff;
+            font-size: .82rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 991.98px) {
+            .hero {
+                min-height: auto;
+                background-position: 62% center;
+            }
+
+            .hero-content {
+                padding: 6rem 0 8rem;
+            }
+
+            .trust-band {
+                margin-top: -3rem;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .landing-navbar .btn {
+                margin-top: .75rem;
+                width: 100%;
+            }
+
+            .hero-content {
+                padding: 5rem 0 7rem;
+            }
+
+            .hero-stat {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body id="inicio">
+<nav class="landing-navbar navbar navbar-expand-lg navbar-light bg-white bg-opacity-95 shadow-sm sticky-top">
+    <div class="container px-4">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark" href="#inicio">
+            <span class="brand-mark d-inline-flex align-items-center justify-content-center">
+                <i class="fas fa-paw"></i>
+            </span>
+            <span>Mascota Sana</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar" aria-controls="landingNavbar" aria-expanded="false" aria-label="Abrir navegaci&oacute;n">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item"><a class="nav-link fw-bold" href="#sobre-nosotros">Sobre nosotros</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold" href="#servicios">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold" href="#contacto">Contacto</a></li>
+                <li class="nav-item"><a class="btn btn-primary btn-landing ms-lg-3 px-4" th:href="@{/login}">&Aacute;rea del cliente</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="container px-4">
+        <div class="hero-content">
+            <div class="hero-eyebrow mb-4">
+                <i class="fas fa-heart-pulse"></i>
+                Cuidado veterinario integral
+            </div>
+            <h1 class="hero-title fw-bolder mb-4">Mascota Sana</h1>
+            <p class="hero-lead mb-5">Acompa&ntilde;amos cada etapa de la vida de tu mascota con medicina preventiva, diagn&oacute;stico claro y una atenci&oacute;n cercana para que siempre se sienta en buenas manos.</p>
+            <div class="d-flex flex-column flex-sm-row gap-3 mb-5">
+                <a th:href="@{/login}" class="btn btn-landing btn-landing-primary shadow-sm">
+                    <i class="fas fa-user-lock me-2"></i> Entrar al &aacute;rea del cliente
+                </a>
+                <a href="#servicios" class="btn btn-landing btn-outline-light">
+                    <i class="fas fa-stethoscope me-2"></i> Ver servicios
+                </a>
+            </div>
+            <div class="d-flex flex-wrap gap-4">
+                <div class="hero-stat">
+                    <div class="h3 fw-bolder mb-0">15+</div>
+                    <div class="small">a&ntilde;os de experiencia</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="h3 fw-bolder mb-0">24/7</div>
+                    <div class="small">atenci&oacute;n de urgencias</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="h3 fw-bolder mb-0">100%</div>
+                    <div class="small">historial cl&iacute;nico digital</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="trust-band">
+    <div class="container px-4">
+        <div class="trust-panel p-4 p-lg-5">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="trust-item d-flex gap-3 align-items-start">
+                        <span class="icon-box"><i class="fas fa-calendar-check"></i></span>
+                        <div>
+                            <h2 class="h5 fw-bold mb-2">Citas organizadas</h2>
+                            <p class="text-muted mb-0">Reserva, seguimiento y recordatorios para que cada visita llegue a tiempo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="trust-item d-flex gap-3 align-items-start">
+                        <span class="icon-box"><i class="fas fa-file-medical"></i></span>
+                        <div>
+                            <h2 class="h5 fw-bold mb-2">Historial disponible</h2>
+                            <p class="text-muted mb-0">Consulta tratamientos, vacunas y documentos cl&iacute;nicos desde un &uacute;nico lugar.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="trust-item d-flex gap-3 align-items-start">
+                        <span class="icon-box"><i class="fas fa-hand-holding-heart"></i></span>
+                        <div>
+                            <h2 class="h5 fw-bold mb-2">Equipo cercano</h2>
+                            <p class="text-muted mb-0">Veterinarios y recepci&oacute;n preparados para atender con calma y precisi&oacute;n.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="sobre-nosotros" class="about-section py-5">
+    <div class="container px-4 py-5">
+        <div class="row gx-5 align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="section-kicker mb-3">Sobre nosotros</div>
+                <h2 class="display-6 fw-bolder mb-4">Una cl&iacute;nica pensada para mascotas y familias.</h2>
+                <p class="lead text-muted mb-4">En Mascota Sana combinamos tecnolog&iacute;a, experiencia m&eacute;dica y trato humano para ofrecer una atenci&oacute;n completa, desde la primera revisi&oacute;n hasta los cuidados m&aacute;s especializados.</p>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-2">
+                            <i class="fas fa-check-circle text-success mt-1"></i>
+                            <span>Medicina preventiva y seguimiento continuo.</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-2">
+                            <i class="fas fa-check-circle text-success mt-1"></i>
+                            <span>Gesti&oacute;n digital de citas, vacunas y facturas.</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-2">
+                            <i class="fas fa-check-circle text-success mt-1"></i>
+                            <span>Protocolos claros para urgencias y revisiones.</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-2">
+                            <i class="fas fa-check-circle text-success mt-1"></i>
+                            <span>Comunicaci&oacute;n sencilla con el &aacute;rea del cliente.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img class="about-img" src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=1000&q=82" alt="Consulta veterinaria con una mascota"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="servicios" class="py-5 bg-white">
+    <div class="container px-4 py-5">
+        <div class="row align-items-end mb-5">
+            <div class="col-lg-7">
+                <div class="section-kicker mb-3">Servicios</div>
+                <h2 class="display-6 fw-bolder mb-3">Todo lo importante, bien coordinado.</h2>
+                <p class="lead text-muted mb-0">Soluciones m&eacute;dicas completas para cuidar la salud, la prevenci&oacute;n y el seguimiento cl&iacute;nico de cada paciente.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card p-4">
+                    <span class="icon-box mb-4"><i class="fas fa-stethoscope"></i></span>
+                    <h3 class="h5 fw-bolder">Medicina general</h3>
+                    <p class="text-muted mb-0">Revisiones, diagn&oacute;stico temprano y tratamientos para patolog&iacute;as frecuentes.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card p-4">
+                    <span class="icon-box mb-4"><i class="fas fa-syringe"></i></span>
+                    <h3 class="h5 fw-bolder">Vacunaci&oacute;n</h3>
+                    <p class="text-muted mb-0">Planes de vacunaci&oacute;n y desparasitaci&oacute;n adaptados a edad, especie y entorno.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card p-4">
+                    <span class="icon-box mb-4"><i class="fas fa-scissors"></i></span>
+                    <h3 class="h5 fw-bolder">Peluquer&iacute;a y est&eacute;tica</h3>
+                    <p class="text-muted mb-0">Cortes, ba&ntilde;os terap&eacute;uticos y cuidado dermatol&oacute;gico para mayor comodidad.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card p-4">
+                    <span class="icon-box mb-4"><i class="fas fa-heartbeat"></i></span>
+                    <h3 class="h5 fw-bolder">Medicina preventiva</h3>
+                    <p class="text-muted mb-0">Nutrici&oacute;n, peso saludable y pautas de cuidado para prevenir problemas futuros.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card p-4">
+                    <span class="icon-box mb-4"><i class="fas fa-ambulance"></i></span>
+                    <h3 class="h5 fw-bolder">Urgencias</h3>
+                    <p class="text-muted mb-0">Respuesta r&aacute;pida y soporte cl&iacute;nico cuando cada minuto cuenta.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="feature-card p-4">
+                    <span class="icon-box mb-4"><i class="fas fa-id-card"></i></span>
+                    <h3 class="h5 fw-bolder">Historial digital</h3>
+                    <p class="text-muted mb-0">Acceso a citas, tratamientos, vacunas y facturaci&oacute;n desde el &aacute;rea del cliente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section py-5">
+    <div class="container px-4 py-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bolder mb-3">Tu mascota merece un seguimiento claro desde hoy.</h2>
+                <p class="lead mb-0 text-white-75">Accede al &aacute;rea del cliente para consultar informaci&oacute;n, gestionar citas y mantener el historial cl&iacute;nico siempre actualizado.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a th:href="@{/login}" class="btn btn-landing btn-light px-4">
+                    <i class="fas fa-arrow-right-to-bracket me-2"></i> Acceder ahora
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="contacto" class="landing-footer pt-5">
+    <div class="container px-4">
+        <div class="row g-5 pb-5">
+            <div class="col-lg-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="footer-brand-mark d-inline-flex align-items-center justify-content-center">
+                        <i class="fas fa-paw"></i>
+                    </span>
+                    <div>
+                        <div class="h5 text-white fw-bolder mb-0">Mascota Sana</div>
+                        <div class="small">Cl&iacute;nica Veterinaria</div>
+                    </div>
+                </div>
+                <p class="mb-4">Atenci&oacute;n veterinaria integral con tecnolog&iacute;a, criterio m&eacute;dico y una experiencia sencilla para las familias.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp fa-lg"></i></a>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <div class="footer-heading mb-3">Navegaci&oacute;n</div>
+                <ul class="list-unstyled mb-0 d-grid gap-2">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a th:href="@{/login}">&Aacute;rea del cliente</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="footer-heading mb-3">Horario</div>
+                <ul class="list-unstyled mb-0 d-grid gap-2">
+                    <li>Lunes a viernes: 9:00 - 20:00</li>
+                    <li>Sabados: 10:00 - 14:00</li>
+                    <li>Urgencias: 24 horas</li>
+                </ul>
+            </div>
+            <div class="col-lg-3">
+                <div class="footer-heading mb-3">Contacto</div>
+                <ul class="list-unstyled mb-0 d-grid gap-2">
+                    <li><i class="fas fa-location-dot me-2 text-warning"></i> Avenida de la Salud 24</li>
+                    <li><i class="fas fa-phone me-2 text-warning"></i> +34 900 123 456</li>
+                    <li><i class="fas fa-envelope me-2 text-warning"></i> hola@mascotasana.local</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-top border-light border-opacity-10 py-4 d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+            <div class="small">Copyright &copy; Cl&iacute;nica Veterinaria Mascota Sana 2026</div>
+            <div class="d-flex gap-3 small">
+                <a href="#">Privacidad</a>
+                <a href="#">T&eacute;rminos</a>
+                <a href="#contacto">Contacto</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

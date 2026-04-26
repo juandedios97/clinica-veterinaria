@@ -48,6 +48,11 @@ public class MascotaService {
         return repo.findByPropietarioId(propietarioId);
     }
 
+    public Mascota findByIdAndPropietario(Long mascotaId, Long propietarioId) {
+        return repo.findByIdAndPropietarioId(mascotaId, propietarioId)
+            .orElseThrow(() -> new EntityNotFoundException("Mascota no encontrada para este cliente: " + mascotaId));
+    }
+
     private synchronized void ensureFotoColumnCapacity() {
         if (fotoColumnReady) {
             return;

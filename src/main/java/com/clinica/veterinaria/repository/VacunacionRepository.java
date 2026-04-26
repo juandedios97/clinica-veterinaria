@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface VacunacionRepository extends JpaRepository<Vacunacion, Long> {
     List<Vacunacion> findByMascotaId(Long mascotaId);
+    List<Vacunacion> findByMascotaPropietarioIdOrderByFechaAplicadaDesc(Long propietarioId);
     List<Vacunacion> findByProximaDosisBefore(LocalDate fecha);
     List<Vacunacion> findByProximaDosisBetween(LocalDate inicio, LocalDate fin);
 }

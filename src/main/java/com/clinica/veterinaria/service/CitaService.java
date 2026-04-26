@@ -30,6 +30,10 @@ public class CitaService {
         return repo.findByMascotaId(mascotaId);
     }
 
+    public List<Cita> findByPropietario(Long propietarioId) {
+        return repo.findByMascotaPropietarioIdOrderByFechaHoraDesc(propietarioId);
+    }
+
     public List<Cita> findByVeterinario(Long veterinarioId) {
         return repo.findByVeterinarioId(veterinarioId);
     }
